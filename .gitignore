@@ -4,6 +4,9 @@ server/node_modules
 client/dist
 server/dist
 
+# Database
+server/todo.sqlite
+
 # local env files
 .env.local
 .env.*.local
