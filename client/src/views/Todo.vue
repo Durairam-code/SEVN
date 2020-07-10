@@ -1,61 +1,79 @@
 <template>
-  <div class="todo">
-    <div id="todo-list" class="container">
-      <div class="row">
-        <div class="col-md-6 mx-auto">
-          <h1 class="text-center">TODO List</h1>
-          <form v-on:submit.prevent="addNewTask">
-            <label for="tasknameinput">Task Name</label>
-            <input
-              v-model="taskname"
-              id="tasknameinput"
-              class="form-control"
-              placeholder="Add New Task"
-            />
-            <button
-              v-if="this.isEdit == false"
-              type="submit"
-              class="btn btn-success btn-block  mt-3"
-            >
-              Submit
-            </button>
-            <button
-              v-else
-              type="button"
-              v-on:click="updateTask()"
-              class="btn btn-primary btn-block  mt-3"
-            >
-              Update
-            </button>
-          </form>
-
-          <table class="table">
-            <tr
-              v-for="todo in todos"
-              v-bind:key="todo.id"
-              v-bind:title="todo.name"
-            >
-              <td class="text-left">{{ todo.name }}</td>
-              <td class="text-right">
-                <button
-                  v-on:click="editTask(todo.name, todo.id)"
-                  class=" btn btn-info "
+  <v-app class="todo">
+    <v-container id="todo-list" class="fill-height" fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" sm="8" md="4">
+          <v-card class="elevation-12">
+            <v-toolbar color="primary" dark flat>
+              <v-spacer />
+              <v-toolbar-title>TODO List</v-toolbar-title>
+              <v-spacer />
+            </v-toolbar>
+            <v-card-text>
+              <v-form v-on:submit.prevent="addNewTask">
+                <v-text-field
+                  v-model="taskname"
+                  id="tasknameinput"
+                  placeholder="Add New Task"
+                  label="Task Name"
+                  solo
+                  dense
+                ></v-text-field>
+                <v-btn
+                  v-if="this.isEdit == false"
+                  block
+                  type="submit"
+                  color="success"
+                  dark
+                  >Submit</v-btn
                 >
-                  Edit
-                </button>
-                <button
-                  v-on:click="deleteTask(todo.id)"
-                  class=" btn btn-danger "
+                <v-btn
+                  v-else
+                  block
+                  type="button"
+                  v-on:click="updateTask()"
+                  color="primary"
+                  dark
+                  >Update</v-btn
                 >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-content>
+                <v-simple-table class="table">
+                  <template v-slot:default>
+                    <tbody>
+                      <tr
+                        v-for="todo in todos"
+                        v-bind:key="todo.id"
+                        v-bind:title="todo.name"
+                      >
+                        <td class="text-subtitle-1">{{ todo.name }}</td>
+                        <td class="text-right">
+                          <v-btn
+                            v-on:click="editTask(todo.name, todo.id)"
+                            class="mr-4"
+                            color="light-blue"
+                            >Edit</v-btn
+                          >
+                          <v-btn
+                            v-on:click="deleteTask(todo.id)"
+                            class="mr-4"
+                            color="error"
+                            >Delete</v-btn
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-content>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -66,7 +84,7 @@ export default {
       todos: [],
       id: "",
       taskname: "",
-      isEdit: false,
+      isEdit: false
     };
   },
   mounted() {
@@ -77,11 +95,11 @@ export default {
       API()
         .get("/view")
         .then(
-          (result) => {
+          result => {
             console.log(result.data);
             this.todos = result.data;
           },
-          (error) => {
+          error => {
             console.error(error);
           }
         );
@@ -89,12 +107,12 @@ export default {
     addNewTask() {
       API()
         .post("/create", { name: this.taskname })
-        .then((res) => {
+        .then(res => {
           this.taskname = "";
           this.getTasks();
           console.log(res);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -106,28 +124,28 @@ export default {
     updateTask() {
       API()
         .put(`/update/${this.id}`, { name: this.taskname })
-        .then((res) => {
+        .then(res => {
           this.taskname = "";
           this.isEdit = false;
           this.getTasks();
           console.log(res);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
     deleteTask(id) {
       API()
         .delete(`/delete/${id}`)
-        .then((res) => {
+        .then(res => {
           this.taskname = "";
           this.getTasks();
           console.log(res);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
-    },
-  },
+    }
+  }
 };
 </script>
